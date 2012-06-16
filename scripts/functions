@@ -1,0 +1,25 @@
+# Utility functions used in other scripts. Derived from
+# similar file in Devstack.
+
+# Save trace setting
+XTRACE=$(set +o | grep xtrace)
+set +o xtrace
+
+# Prints "message" and exits
+# die "message"
+function die() {
+    local exitcode=$?
+    set +o xtrace
+    echo $@
+    exit $exitcode
+}
+
+# apt-get wrapper to set arguments correctly
+# apt_get operation package [package ...]
+function apt_get() {
+    local sudo="sudo"
+    [[ "$(id -u)" = "0" ]] && sudo="env"
+    $sudo DEBIAN_FRONTEND=noninteractive \
+        http_proxy=$HTTP_PROXY https_proxy=$HTTPS_PROXY \
+        apt-get --option "Dpkg::Options::=--force-confold" --assume-yes "$@"
+}
