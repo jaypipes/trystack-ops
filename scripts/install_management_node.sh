@@ -45,37 +45,14 @@ sudo cobbler get-loaders
 # See if we've got anything we need to check on...
 sudo cobbler check || die "Cobbler check failed. Please fix any issues and re-run."
 
-# Add the Opscode Chef repo 
-sudo echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | sudo tee /etc/apt/sources.list.d/opscode.list 
+# TODO(jaypipes): Copy the $ETC_DIR/cobbler/settings.tpl and
+# replace the placeholder variables, then copy into /etc/cobbler.
+# Right now, installing Cobbler installs an /etc/cobbler/settings file
+# that already has the server and next-server variables set to the
+# management node's IP address automatically.
 
-# Set up the keys needed for the Chef server to communicate
-# with the Opscode packages repos
-sudo mkdir -p /etc/apt/trusted.gpg.d 
-gpg --keyserver keys.gnupg.net --recv-keys 83EF826A 
-gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg > /dev/null 
-apt_get update --force-yes
-apt_get install opscode-keyring --force-yes
- 
-# Install Chef server
-apt_get upgrade --force-yes 
-apt_get install chef chef-server --force-yes 
- 
-# Copy the PEM file for Chef into the web Chef and local Chef cache
-mkdir -p ~/.chef 
-sudo cp /etc/chef/validation.pem /etc/chef/webui.pem ~/.chef 
-sudo chown -R $USER ~/.chef 
- 
-# Set up Knife -- Chef's CLI tool
-knife configure -i 
-
-# Create the netboot install server
-$SCRIPTS_DIR/create_pxe_install_server.sh 
-if [ -r /var/lib/tftpboot  ]; then 
-  rm -rf /var/lib/tftpboot 
-fi 
-sudo ln -s /tftpboot /var/lib/tftpboot 
-sudo chmod 0755 -R /tftpboot 
-sud chmod 0666 /var/lib/tftpboot/ubuntu 
+# Install and configure the Chef server
+$SCRIPTS_DIR/install_chef_server.sh
 
 # Restart the dnsmasq server
 sudo /etc/init.d/dnsmasq restart 
