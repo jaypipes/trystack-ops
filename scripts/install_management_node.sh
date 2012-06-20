@@ -88,7 +88,7 @@ fi
 
 # Create a record in Cobbler for each service node in the zone
 OIFS=$IFS
-IFS="\n"
+IFS=$'\n'
 for line in $(<${NODE_INFO_FILE}); do
   if [[ $line == \#* ]]; then
     continue  # Skip comment lines...
