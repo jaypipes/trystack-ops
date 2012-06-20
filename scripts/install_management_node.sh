@@ -46,13 +46,13 @@ apt_get install dnsmasq ipmitool --force-yes
 apt_get install cobbler --force-yes
 
 # cobbler check will cry if Apache isn't restarted...
-sudo service httpd restart || true
+service httpd restart || true
 
 # Grab bootloaders for Cobbler so cobbler check won't cry
-sudo cobbler get-loaders
+cobbler get-loaders
 
 # See if we've got anything we need to check on...
-sudo cobbler check || die "Cobbler check failed. Please fix any issues and re-run."
+cobbler check || die "Cobbler check failed. Please fix any issues and re-run."
 
 # TODO(jaypipes): Copy the $ETC_DIR/cobbler/settings.tpl and
 # replace the placeholder variables, then copy into /etc/cobbler.
@@ -70,15 +70,15 @@ fi
 # Mount the Precise ISO and import it into Cobbler
 PRECISE_MNT_PATH=$IMAGES_DIR/precise/mnt
 mkdir -p $PRECISE_MNT_PATH
-sudo mount -o loop $ISO_FILEPATH $PRECISE_MNT_PATH
-sudo cobbler import --path=$PRECISE_MNT_PATH --name=precise --arch=x86_64
-sudo cobbler sync
-sudo umount $PRECISE_MNT_PATH
+mount -o loop $ISO_FILEPATH $PRECISE_MNT_PATH
+cobbler import --path=$PRECISE_MNT_PATH --name=precise --arch=x86_64
+cobbler sync
+umount $PRECISE_MNT_PATH
 
 # Adds a profile to Cobbler for a base service node. Note
 # that we use Chef roles to further classify what packages
 # and other things are set up on individual service nodes
-sudo cobbler profile add --name=service_node --distro=precise-x86_64
+cobbler profile add --name=service_node --distro=precise-x86_64
 
 # In bash ${VAR,,} will lowercase VAR
 NODE_INFO_FILE=$VAR_DIR/zones/${ZONE_ID,,}.info
@@ -98,18 +98,18 @@ for line in $(<${NODE_INFO_FILE}); do
   hostname=$(echo $line | cut -f 1)
   mac=$(echo $line | cut -f 2)
   ip=$(echo $line | cut -f 3)
-  sudo cobbler system add --name=$hostname --mac=$mac --ip-address=$ip --profile=service_node --netboot-enabled=true
+  cobbler system add --name=$hostname --mac=$mac --ip-address=$ip --profile=service_node --netboot-enabled=true
 done
 IFS=$OIFS
 
-sudo cobbler sync
-sudo cobbler report
+cobbler sync
+cobbler report
 
 # Install and configure the Chef server
 $SCRIPTS_DIR/install_chef_server.sh
 
 # Restart the dnsmasq server
-sudo /etc/init.d/dnsmasq restart
+/etc/init.d/dnsmasq restart
 
 # Behave.
 exit 0

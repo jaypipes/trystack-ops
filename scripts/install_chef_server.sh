@@ -1,4 +1,14 @@
+#!/bin/bash -e
+# 
 # Installs and sets up the Chef Server
+
+SCRIPTS_DIR=$(cd $(dirname "$0") && pwd)
+ROOT_DIR=$(cd $SCRIPTS_DIR/../ && pwd)
+VAR_DIR=$(cd $ROOT_DIR/var && pwd)
+ETC_DIR=$(cd $ROOT_DIR/etc && pwd)
+
+# Import common functions
+source $SCRIPTS_DIR/functions
 
 # Add the Opscode Chef repo 
 sudo echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | sudo tee /etc/apt/sources.list.d/opscode.list 
