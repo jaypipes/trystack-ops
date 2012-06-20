@@ -5,14 +5,14 @@
 # Chef Server
 
 if [ ! $USER == "root" ]; then
-  print "Please run this script as root. Exiting."
+  echo "Please run this script as root. Exiting."
   exit 1
 fi
 
 if [ -z $ZONE_ID ]; then
   if [ $# -eq 0 ]; then
-    print "You need to set the ZONE_ID environment variable or "
-    print "supply it as the first argument to this script."
+    echo "You need to set the ZONE_ID environment variable or "
+    echo "supply it as the first argument to this script."
     exit 1
   fi
   ZONE_ID=$1
