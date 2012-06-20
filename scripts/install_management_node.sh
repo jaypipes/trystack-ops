@@ -46,7 +46,7 @@ apt_get install dnsmasq ipmitool --force-yes
 apt_get install cobbler --force-yes
 
 # cobbler check will cry if Apache isn't restarted...
-sudo service httpd restart
+sudo service httpd restart || true
 
 # Grab bootloaders for Cobbler so cobbler check won't cry
 sudo cobbler get-loaders
