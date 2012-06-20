@@ -22,7 +22,7 @@ fi
 set -o errexit
 
 SCRIPTS_DIR=$(cd $(dirname "$0") && pwd)
-ROOT_DIR=$(cd $SCRIPTS_DR/../ && pwd)
+ROOT_DIR=$(cd $SCRIPTS_DIR/../ && pwd)
 VAR_DIR=$(cd $ROOT_DIR/var && pwd)
 ETC_DIR=$(cd $ROOT_DIR/etc && pwd)
 PRECISE_DOWNLOAD_URI="http://www.ubuntu.com/start-download?distro=server&bits=64&release=precise"
@@ -41,11 +41,6 @@ set -o xtrace
 
 # Grab tools for DHCP and managing servers via IPMI
 apt_get install dnsmasq ipmitool --force-yes
-
-# We have a dnsmasq.conf for each zone that contains
-# the information on the service nodes in each zone
-sudo cp /etc/dnsmasq.conf /etc/dnsmasq.bak
-sudo cp $ETC_DIR/dnsmasq.conf /etc/dnsmasq.conf
 
 # Install Cobbler and register the service nodes in this zone with Cobbler
 apt_get install cobbler --force-yes
@@ -104,6 +99,9 @@ for line in $(<${NODE_INFO_FILE}); do
   ip=$(echo $line | cut -f 3)
   sudo cobbler system add --name=$hostname --mac=$mac --ip-address=$ip --profile=service_node --netboot-enabled=true
 done
+
+sudo cobbler sync
+sudo cobbler report
 
 # Install and configure the Chef server
 $SCRIPTS_DIR/install_chef_server.sh
