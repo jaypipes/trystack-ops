@@ -87,6 +87,8 @@ if [ ! -f $NODE_INFO_FILE ]; then
 fi
 
 # Create a record in Cobbler for each service node in the zone
+OIFS=$IFS
+IFS="\n"
 for line in $(<${NODE_INFO_FILE}); do
   if [[ $line == \#* ]]; then
     continue  # Skip comment lines...
@@ -98,6 +100,7 @@ for line in $(<${NODE_INFO_FILE}); do
   ip=$(echo $line | cut -f 3)
   sudo cobbler system add --name=$hostname --mac=$mac --ip-address=$ip --profile=service_node --netboot-enabled=true
 done
+IFS=$OIFS
 
 sudo cobbler sync
 sudo cobbler report
