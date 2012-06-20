@@ -88,7 +88,6 @@ fi
 
 # Create a record in Cobbler for each service node in the zone
 for line in $(<${NODE_INFO_FILE}); do
-  local hostname mac ip info
   if [[ $line == \#* ]]; then
     continue  # Skip comment lines...
   fi
