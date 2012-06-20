@@ -4,14 +4,18 @@
 # and sets up the basic DHCP server, netboot install server and
 # Chef Server
 
-if [ $USER -ne "root" ]; then
+if [ ! $USER == "root" ]; then
   print "Please run this script as root. Exiting."
   exit 1
 fi
 
-if [ -z $ZONE_ID -a $# -eq 0 ]; then
-  print "You need to set the ZONE_ID environment variable or "
-  print "supply it as the first argument to this script."
+if [ -z $ZONE_ID ]; then
+  if [ $# -eq 0 ]; then
+    print "You need to set the ZONE_ID environment variable or "
+    print "supply it as the first argument to this script."
+    exit 1
+  fi
+  ZONE_ID=$1
 fi
 
 # Exit on error to stop unexpected errors
