@@ -46,7 +46,7 @@ apt_get install dnsmasq ipmitool --force-yes
 apt_get install cobbler --force-yes
 
 # cobbler check will cry if Apache isn't restarted...
-service httpd restart || true
+service apache2 restart
 
 # Grab bootloaders for Cobbler so cobbler check won't cry
 cobbler get-loaders
@@ -95,9 +95,9 @@ for line in $(<${NODE_INFO_FILE}); do
   fi
   # Each line in the service node info file is like so:
   # HOSTNAME MAC IP
-  hostname=$(echo $line | cut -f 1)
-  mac=$(echo $line | cut -f 2)
-  ip=$(echo $line | cut -f 3)
+  hostname=$(echo $line | cut -d ' ' -f 1)
+  mac=$(echo $line | cut -d ' ' -f 2)
+  ip=$(echo $line | cut -d ' ' -f 3)
   cobbler system add --name=$hostname --mac=$mac --ip-address=$ip --profile=service_node --netboot-enabled=true
 done
 IFS=$OIFS
