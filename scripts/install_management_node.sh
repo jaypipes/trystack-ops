@@ -96,7 +96,7 @@ for line in $(<${NODE_INFO_FILE}); do
   # Each line in the service node info file is like so:
   # HOSTNAME MAC IP
   hostname=$(echo $line | cut -d ' ' -f 1)
-  mac=$(echo $line | cut -d ' ' -f 2)
+  mac=$(echo $line | cut -d ' ' -f 2 | tr '-' ':')
   ip=$(echo $line | cut -d ' ' -f 3)
   cobbler system add --name=$hostname --mac=$mac --ip-address=$ip --profile=service_node --netboot-enabled=true
 done
